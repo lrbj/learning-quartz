@@ -46,8 +46,8 @@ public class BatchConfiguration {
                 +" from TestFile tra,TestTask Property ttp WHERE ttp.taskId=tra.taskId AND ttp.beginTime BETWEEN ?1 AND ?2 "
                 + "GROUP BY ttp.taskId, tra.fileId, ttp.ruleId" );
         Map<String, Object> parameterValues = new HashMap<> (  );
-        parameterValues.put ( "1" , CommonUtils.getTmeSection(0,0,0));
-        parameterValues.put ( "2", CommonUtils.getTmeSection ( 23,59,59 ) );
+        parameterValues.put ( "1" , CommonUtils.getTimeSection (0,0,0));
+        parameterValues.put ( "2", CommonUtils.getTimeSection ( 23,59,59 ) );
 
         reader.setParameterValues ( parameterValues );
         reader.setEntityManagerFactory ( entityManagerFactory );
