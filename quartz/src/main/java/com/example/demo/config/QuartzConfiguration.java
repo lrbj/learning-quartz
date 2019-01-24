@@ -17,6 +17,11 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 @Configuration
 public class QuartzConfiguration {
 
+    /**
+     *1、 配置任务
+     * @param quartzTask  为需要执行的任务
+     * @return
+     */
     @Bean(name = "reptilianJob")
     public MethodInvokingJobDetailFactoryBean detailFactoryBean(QuartzTask quartzTask){
 
@@ -42,7 +47,7 @@ public class QuartzConfiguration {
 
 
     /**
-     * 定时触发器
+     *2、 定时触发器
      * @param jobDetail
      * @return
      */
@@ -60,7 +65,11 @@ public class QuartzConfiguration {
         return  tigger;
     }
 
-
+    /**
+     * 3、调度工厂
+     * @param trigger
+     * @return
+     */
     @Bean(name= "scheduler")
     public SchedulerFactoryBean schedulerFactoryBean(Trigger trigger){
 
@@ -70,7 +79,7 @@ public class QuartzConfiguration {
         factoryBean.setOverwriteExistingJobs ( true );
 
         //延时启动，应用启动1秒后
-        factoryBean.setStartupDelay ( 1 );
+        factoryBean.setStartupDelay ( 0);
 
         //注册触发器
         factoryBean.setTriggers ( trigger );
