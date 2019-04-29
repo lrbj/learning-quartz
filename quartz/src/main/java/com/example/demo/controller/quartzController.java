@@ -1,36 +1,38 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import com.example.demo.task.QuartzTask1;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class DemoApplicationTests {
-
-    @Test
-    public void contextLoads() {
-    }
-
-
-    @Test
-    public void test(){
+/**
+ * @Author: Kayla, Ye
+ * @Description:
+ * @Date:Created in 3:24 PM 4/29/2019
+ */
+@RestController
+@RequestMapping("/api/quartz")
+@Api(tags = "定时器接口")
+public class quartzController {
+    @PostMapping
+    @ApiOperation(value = "一个完整实例")
+    public void  quartzTest(){
         try {
-        //1、创建scheduler的工厂
-        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+            //1、创建scheduler的工厂
+            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
 
-        //2、从工厂中获取调度器实例
+            //2、从工厂中获取调度器实例
             Scheduler scheduler = schedulerFactory.getScheduler();
             System.out.println("test scheduler");
 
-         //3、创建JobDetail
-            JobDetail  jobDetail = JobBuilder.newJob( QuartzTask1.class)
+            //3、创建JobDetail
+            JobDetail jobDetail = JobBuilder.newJob( QuartzTask1.class)
                     .withDescription("测试的定时任务。")//job的描述
                     .withIdentity("test", "testgroup")//任务job和name 和group
                     .build();
@@ -58,5 +60,4 @@ public class DemoApplicationTests {
             e.printStackTrace();
         }
     }
-
 }

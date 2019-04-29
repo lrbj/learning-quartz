@@ -1,24 +1,23 @@
 spring:
   datasource:
     druid:
-      name: druid-database-fireiot #È¡Ò»¸ö±ğÃû¹©ºóÃæquartzµ÷ÓÃ
+      name: druid-database-quartz #å–ä¸€ä¸ªåˆ«åä¾›åé¢quartzè°ƒç”¨
       url: jdbc:postgresql://127.0.0.1:5432/test
-#      url: ${spring.datasource.url}
       username: postgres
       password: 123456
       driver-class-name: org.postgresql.Driver
       filters: stat
-      # ³õÊ¼Á¬½Ó
+      # åˆå§‹è¿æ¥
       initialSize: 1
-      # ×î´óÁ¬½ÓÊı
+      # æœ€å¤§è¿æ¥æ•°
       maxActive: 20
-      # »ñÈ¡µÄ×î³¤µÈ´ıÊ±
+      # è·å–çš„æœ€é•¿ç­‰å¾…æ—¶
       maxWait: 60000
-      # ×îĞ¡¿ÕÏĞÁ¬½ÓÊı
+      # æœ€å°ç©ºé—²è¿æ¥æ•°
       minIdle: 1
-      # Ã¿Ò»·ÖÖÓÖ´ĞĞ¿ÕÏĞÁ¬½Ó»ØÊÕ
+      # æ¯ä¸€åˆ†é’Ÿæ‰§è¡Œç©ºé—²è¿æ¥å›æ”¶
       timeBetweenEvictionRunsMillis: 60000
-      # Ã¿Ê®·ÖÖÓ»ØÊÕ¿ÕÏĞÁ¬½Ó
+      # æ¯ååˆ†é’Ÿå›æ”¶ç©ºé—²è¿æ¥
       minEvictableIdleTimeMillis: 600000
       validationQuery: select 'x'
       testWhileIdle: true
@@ -28,24 +27,40 @@ spring:
       maxOpenPreparedStatements: 20
 
   jpa:
-      #open-in-view: true
-      generate-ddl: true
-      hibernate:
-        ddl-auto: update
-        #use-new-id-generator-mappings: true
-      show-sql: true
-      properties:
-        hibernate:
-          enable_lazy_load_no_trans: true
-          temp:
-            use_jdbc_metadata_defaults: false
-
-  quartz:
-      jdbc:
-        initialize-schema: never
-      job-store-type: jdbc  #Ä¬ÈÏ´æ´¢·½Ê½ÎªÄÚ´æ·½Ê½MEMORY£¬´Ë´¦ÉèÖÃÎªÊı¾İ·½Ê½³Ö¾Ã»¯ÈÎÎñ
+    #open-in-view: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      #use-new-id-generator-mappings: true
+    show-sql: true
     properties:
-      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-      org.quartz.jobStore.dataSource: druid-database-fireiot
-      org.quartz.threadPool.threadCount: 5
-      org.quartz.jobStore.class: org.quartz.impl.jdbcjobstore.JobStoreTX
+      hibernate:
+        enable_lazy_load_no_trans: true
+        temp:
+          use_jdbc_metadata_defaults: false
+  quartz:
+    jdbc:
+      initialize-schema: never
+    job-store-type: jdbc #é»˜è®¤å­˜å‚¨æ–¹å¼ä¸ºå†…å­˜æ–¹å¼MEMORYï¼Œæ­¤å¤„è®¾ç½®ä¸ºæ•°æ®æ–¹å¼æŒä¹…åŒ–ä»»åŠ¡
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: quartzTest
+            instanceId: AUTO
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            dataSource: druid-database-quartz
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            tablePrefix: QRTZ_
+            useProperties: true #//è®¾ç½®ä¸ºTRUEä¸ä¼šå‡ºç°åºåˆ—åŒ–éå­—ç¬¦ä¸²ç±»åˆ° BLOB æ—¶äº§ç”Ÿçš„ç±»ç‰ˆæœ¬é—®é¢˜
+            clusterCheckinInterval: 20000 #è°ƒåº¦å®ä¾‹å¤±æ•ˆçš„æ£€æŸ¥æ—¶é—´é—´éš”
+            misfireThreshold: 60000 #å®¹è®¸çš„æœ€å¤§ä½œä¸šå»¶é•¿æ—¶é—´
+            isClustered: false #æ˜¯å¦åŠ å…¥é›†ç¾¤
+
+        threadPool:
+          threadCount: 3
+          threadPriority: 5 #ï¼ˆthreadPriority å±æ€§çš„æœ€å¤§å€¼æ˜¯å¸¸é‡ java.lang.Thread.MAX_PRIORITYï¼Œç­‰äº10ã€‚æœ€å°å€¼ä¸ºå¸¸é‡ java.lang.Thread.MIN_PRIORITYï¼Œä¸º1ï¼‰
+
+swagger:
+  enable: true
