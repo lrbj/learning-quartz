@@ -1,7 +1,8 @@
 spring:
   datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    name: druid-database-quartz #取一个别名供后面quartz调用
     druid:
-      name: druid-database-quartz #取一个别名供后面quartz调用
       url: jdbc:postgresql://127.0.0.1:5432/test
       username: postgres
       password: 123456
@@ -23,7 +24,7 @@ spring:
       testWhileIdle: true
       testOnBorrow: false
       testOnReturn: false
-      poolPreparedStatements: true
+      poolPreparedStatements: true #打开PSCache,并且指定每个连上PSCach 的大小
       maxOpenPreparedStatements: 20
 
   jpa:
@@ -50,17 +51,19 @@ spring:
             instanceId: AUTO
           jobStore:
             driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-            dataSource: druid-database-quartz
+#            dataSource: druid-database-quartz
             class: org.quartz.impl.jdbcjobstore.JobStoreTX
-            tablePrefix: QRTZ_
-            useProperties: true #//设置为TRUE不会出现序列化非字符串类到 BLOB 时产生的类版本问题
+#            tablePrefix: QRTZ_
             clusterCheckinInterval: 20000 #调度实例失效的检查时间间隔
             misfireThreshold: 60000 #容许的最大作业延长时间
             isClustered: false #是否加入集群
 
-        threadPool:
-          threadCount: 3
-          threadPriority: 5 #（threadPriority 属性的最大值是常量 java.lang.Thread.MAX_PRIORITY，等于10。最小值为常量 java.lang.Thread.MIN_PRIORITY，为1）
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 3
+            threadPriority: 5 #（threadPriority 属性的最大值是常量 java.lang.Thread.MAX_PRIORITY，等于10。最小值为常量 java.lang.Thread.MIN_PRIORITY，为1）
+            threadsInheritContextClassLoaderOfInitializingThread: true
+
 
 swagger:
   enable: true
