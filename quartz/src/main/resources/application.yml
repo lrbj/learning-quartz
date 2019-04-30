@@ -47,7 +47,7 @@ spring:
       org:
         quartz:
           scheduler:
-            instanceName: quartzTest
+#            instanceName: quartzTest
             instanceId: AUTO
           jobStore:
             driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
@@ -60,7 +60,7 @@ spring:
 
           threadPool:
             class: org.quartz.simpl.SimpleThreadPool
-            threadCount: 3
+            threadCount: 10
             threadPriority: 5 #（threadPriority 属性的最大值是常量 java.lang.Thread.MAX_PRIORITY，等于10。最小值为常量 java.lang.Thread.MIN_PRIORITY，为1）
             threadsInheritContextClassLoaderOfInitializingThread: true
 

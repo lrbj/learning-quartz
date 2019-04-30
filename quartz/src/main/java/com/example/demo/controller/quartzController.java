@@ -1,10 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.task.QuartzTask1;
+import com.example.demo.job.QuartzTask1;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +30,7 @@ public class quartzController {
             //3、创建JobDetail
             JobDetail jobDetail = JobBuilder.newJob( QuartzTask1.class)
                     .withDescription("测试的定时任务。")//job的描述
-                    .withIdentity("test2", "testgroup2")//任务job和name 和group
+                    .withIdentity("test3", "testgroup3")//任务job和name 和group
                     .build();
 
             //任务运行的时间
@@ -42,7 +41,7 @@ public class quartzController {
             //4、创建Trigger
             Trigger t = TriggerBuilder.newTrigger()
                     .withDescription("")
-                    .withIdentity("test2","testgroup2")
+                    .withIdentity("test3","testgroup3")
                     .startAt(statime)
                     .withSchedule(CronScheduleBuilder.cronSchedule("0/2 * * * * ?"))
                     .build();//每两秒执行一次

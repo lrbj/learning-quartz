@@ -1,4 +1,4 @@
-package com.example.demo.task;
+package com.example.demo.job;
 
 import org.quartz.*;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.Date;
 @DisallowConcurrentExecution
 //表示正常执行完job后，jobDataMap的数据应该被改动，以被下一次调用
 @PersistJobDataAfterExecution
-public class QuartzTask1 implements Job {
+public class QuartzTask1 implements BaseJob {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         System.out.println("执行业务处理task1：" + new Date());

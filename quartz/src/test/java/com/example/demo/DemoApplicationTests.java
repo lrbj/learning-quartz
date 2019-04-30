@@ -1,10 +1,10 @@
 package com.example.demo;
 
-import com.example.demo.task.QuartzTask1;
+import com.example.demo.job.QuartzTask1;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -19,20 +19,15 @@ public class DemoApplicationTests {
     }
 
 
+    @Autowired
+    private  Scheduler scheduler;
     @Test
     public void test(){
         try {
-        //1、创建scheduler的工厂
-        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-
-        //2、从工厂中获取调度器实例
-            Scheduler scheduler = schedulerFactory.getScheduler();
-            System.out.println("test scheduler");
-
          //3、创建JobDetail
             JobDetail  jobDetail = JobBuilder.newJob( QuartzTask1.class)
                     .withDescription("测试的定时任务。")//job的描述
-                    .withIdentity("test", "testgroup")//任务job和name 和group
+                    .withIdentity("test111", "testgroup")//任务job和name 和group,各自的name 和group必须唯一
                     .build();
 
             //任务运行的时间
@@ -43,7 +38,7 @@ public class DemoApplicationTests {
             //4、创建Trigger
             Trigger t = TriggerBuilder.newTrigger()
                     .withDescription("")
-                    .withIdentity("test","testgroup")
+                    .withIdentity("test","testgroup") //Trigger 的name和group必须唯一
                     .startAt(statime)
                     .withSchedule(CronScheduleBuilder.cronSchedule("0/2 * * * * ?"))
                     .build();//每两秒执行一次
