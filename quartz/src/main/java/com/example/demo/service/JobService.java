@@ -41,5 +41,15 @@ public interface JobService {
      * @param jobDto
      */
     void update(JobDto jobDto) throws SchedulerException;
+
+    /**
+     * 启动所有的任务
+     */
+    void startAllJobs();
+
+    /**
+     * 关闭所有的任务
+     */
+    void shutdownAllJobs();
 }
 

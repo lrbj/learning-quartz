@@ -67,3 +67,6 @@ spring:
 
 swagger:
   enable: true
+
+  thymeleaf:
+    cache: false

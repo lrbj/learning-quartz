@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import lombok.Data;
+import org.quartz.Job;
 
 import javax.validation.constraints.NotBlank;
 
@@ -14,8 +15,10 @@ public class JobDto {
     /**
      * 定时任务全类名
      */
-    @NotBlank(message = "类名不能为空")
-    private String jobClassName;
+//    @NotBlank(message = "类名不能为空")
+    private Class<? extends Job> jobClass; //类名
+
+
     /**
      * 名字
      */
@@ -27,6 +30,10 @@ public class JobDto {
      */
     @NotBlank(message = "任务组（触发器）名不能为空")
     private String GroupName;
+
+
+    @NotBlank(message = "类名")
+    private String jobClassName;
     /**
      * 定时任务cron表达式
      */

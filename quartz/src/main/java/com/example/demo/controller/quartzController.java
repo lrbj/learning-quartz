@@ -1,13 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.JobDto;
 import com.example.demo.job.QuartzTask1;
+import com.example.demo.service.JobService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -23,6 +24,10 @@ public class quartzController {
 
     @Autowired
     Scheduler scheduler;
+
+    @Autowired
+    JobService jobService;
+
     @PostMapping
     @ApiOperation(value = "一个完整实例")
     public void  quartzTest(){
@@ -56,5 +61,49 @@ public class quartzController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @PostMapping("/add")
+    @ApiOperation(value = "添加工作任务")
+    public void addJob(@RequestBody(required = true)JobDto jobDto) throws Exception {
+        jobService.addJob(jobDto);
+    }
+
+
+    @PatchMapping("/update")
+    @ApiOperation(value = "更新工作任务时间")
+    public  void updateJob(@RequestBody(required = true) JobDto jobDto) throws SchedulerException {
+        jobService.update(jobDto);
+    }
+
+    @DeleteMapping("/remove")
+    @ApiOperation(value = "移除工作任务")
+    public  void removeJob(@RequestBody(required = true) JobDto jobDto) throws SchedulerException {
+        jobService.deleteJob(jobDto);
+    }
+
+    @PostMapping("/pause")
+    @ApiOperation(value = "暂停工作任务")
+    public  void pauseJob(@RequestBody(required = true) JobDto jobDto) throws SchedulerException {
+        jobService.pauseJob(jobDto);
+    }
+
+
+    @PostMapping("/resume")
+    @ApiOperation(value = "恢复工作任务")
+    public void resume(@RequestBody(required = true) JobDto jobDto) throws SchedulerException {
+        jobService.resumeJob(jobDto);
+    }
+
+    @PostMapping("/startAll")
+    @ApiOperation(value = "启动所有任务")
+    public void startAll(){
+        jobService.startAllJobs();
+    }
+
+    @PostMapping("/shutdownAll")
+    @ApiOperation(value = "关闭所有任务")
+    public void shutdownAll(){
+        jobService.shutdownAllJobs();
     }
 }

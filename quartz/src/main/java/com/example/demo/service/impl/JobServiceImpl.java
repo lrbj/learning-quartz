@@ -4,11 +4,9 @@ import com.example.demo.common.ClassFunction;
 import com.example.demo.dto.JobDto;
 import com.example.demo.service.JobService;
 import org.quartz.*;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.Callable;
 
 /**
  * @Author: Kayla, Ye
@@ -36,42 +34,92 @@ public class JobServiceImpl implements JobService {
                 .withSchedule(cronScheduleBuilder)
                 .build();
 
-        scheduler.start();
+        if(!scheduler.isShutdown()){
+            scheduler.start(); //启动
+        }
         scheduler.scheduleJob(jobDetail, trigger);
     }
 
     @Override
     public void deleteJob(JobDto jobDto) throws SchedulerException {
 
-        scheduler.pauseTrigger(TriggerKey.triggerKey(jobDto.getName(), jobDto.getGroupName()));//暂停触发器
-        scheduler.unscheduleJob(TriggerKey.triggerKey(jobDto.getName(),jobDto.getGroupName()));//从调度中移除
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobDto.getName(), jobDto.getGroupName());
+        JobKey jobKey = JobKey.jobKey(jobDto.getName(), jobDto.getGroupName());
+        scheduler.pauseTrigger(triggerKey);//停止触发器
+        scheduler.unscheduleJob(triggerKey);//移除触发器
         scheduler.deleteJob(JobKey.jobKey(jobDto.getName(), jobDto.getGroupName()));//删除任务
 
     }
 
+    /**
+     * 停止任务
+     * @param jobDto
+     * @throws SchedulerException
+     */
     @Override
     public void pauseJob(JobDto jobDto) throws SchedulerException {
-        scheduler.pauseJob(JobKey.jobKey(jobDto.getJobClassName(), jobDto.getGroupName()));
+        scheduler.pauseJob(JobKey.jobKey(jobDto.getName(), jobDto.getGroupName()));
 
     }
 
+    /**
+     * 恢复任务
+     * @param jobDto
+     * @throws SchedulerException
+     */
     @Override
     public void resumeJob(JobDto jobDto) throws SchedulerException {
         scheduler.resumeJob(JobKey.jobKey(jobDto.getName(), jobDto.getGroupName() ));
     }
 
+
+    /**
+     * 修改任务触发时间
+     * @param jobDto
+     * @throws SchedulerException
+     */
     @Override
     public void update(JobDto jobDto) throws SchedulerException {
 
         TriggerKey triggerKey = TriggerKey.triggerKey(jobDto.getName(), jobDto.getGroupName());
-        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(jobDto.getCronExpression());
-        Trigger trigger = scheduler.getTrigger(triggerKey);
-        trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
-
-        scheduler.rescheduleJob(triggerKey,trigger);
-
-
+        if(null == triggerKey){
+            return;
         }
-
+        CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+        if(null == trigger){
+            return;
+        }
+        String oldTime = trigger.getCronExpression();
+        if(!oldTime.equalsIgnoreCase(jobDto.getCronExpression())){
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(jobDto.getCronExpression());
+            trigger = trigger.getTriggerBuilder()
+                .withIdentity(triggerKey)
+                .withSchedule(cronScheduleBuilder)
+                .build();
+            scheduler.rescheduleJob(triggerKey,trigger);
+        }
     }
+
+    @Override
+    public void startAllJobs() {
+        try {
+            scheduler.start();
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void shutdownAllJobs() {
+
+        try {
+            if(!scheduler.isInStandbyMode()){
+                scheduler.standby();
+            }
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

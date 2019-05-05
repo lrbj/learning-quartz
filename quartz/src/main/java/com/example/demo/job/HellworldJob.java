@@ -10,11 +10,11 @@ import java.util.Date;
  * @Description:
  * @Date:Created in 3:01 PM 4/30/2019
  */
-@Component
 public class HellworldJob implements BaseJob {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println("hello World!:" + new Date());
+        System.out.println("hello World!!!:" + new Date());
+        System.out.println("this is a job");
     }
 }
